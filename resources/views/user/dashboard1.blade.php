@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    {{-- <!-- Header -->
+    <!-- Header -->
     <header class="header">
         <div class="container d-flex justify-content-between align-items-center">
             <!-- Logo and Brand Name -->
@@ -86,8 +86,7 @@
                 </div>
             </div>
         </div>
-    </header> --}}
-    @include('user.layout.header')
+    </header>
 
     <!-- Carousel Section -->
     <div id="carouselExampleIndicators" class="carousel slide mx-2 my-2" data-ride="carousel">
@@ -112,7 +111,7 @@
         </a>
     </div>
 
-    <!-- Culinary Section -->
+    {{-- <!-- Culinary Section -->
     <section class="culinary-section my-5 text-center">
         <h2 class="mb-4">Aneka kuliner menarik</h2>
         <div class="d-flex justify-content-center gap-5 flex-wrap">
@@ -128,7 +127,7 @@
                 </div>
             @endforeach
         </div>
-    </section>
+    </section> --}}
 
 
 

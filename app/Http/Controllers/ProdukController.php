@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\Kategori;
+use App\Models\CartItem;
+use App\Models\Keranjang;
 use Illuminate\Http\Request;
 
 class ProdukController extends Controller
@@ -158,19 +160,53 @@ public function update(Request $request, $id)
 
 public function dashboard()
 {
+    $kategori = Kategori::all();
     $produks = Produk::all(); // Ambil semua produk dari database
-    return view('user.dashboard', compact('produks'));
+    $userId = auth()->id();
+    $keranjangId = Keranjang::where('user_id', $userId)->firstOrFail()->id;
+    $cartCount = CartItem::where('keranjang_id', $keranjangId)->count();
+    return view('user.dashboard', compact('kategori', 'produks', 'cartCount'));
 }
 
+
+public function ulasan()
+{
+    // $produks = Produk::all(); // Ambil semua produk dari database
+    return view('user.ulasan');
+}
 public function show($id)
 {
     $produk = Produk::with('kategori')->findOrFail($id);
     // Mengambil produk lain dari kategori yang sama
     $produks = Produk::where('kategori_id', $produk->kategori_id)
                     ->where('id', '!=', $produk->id) // Menghindari produk yang sama
-                    ->take(4) // Mengambil 4 produk
+                    // ->take() // Mengambil 4 produk
                     ->get();
-    return view('user.show', compact('produk', 'produks'));
+    $userId = auth()->id();
+    $keranjangId = Keranjang::where('user_id', $userId)->first()->id;
+    $cartCount = CartItem::where('keranjang_id', $keranjangId)->count();
+    return view('user.show', compact('produk', 'produks', 'cartCount'));
+}
+
+public function kategoriProduk($id)
+{
+    $kategori = Kategori::findOrFail($id); // Get the category by ID
+    $produks = Produk::where('kategori_id', $id)->get(); // Get all products in this category
+
+    return view('user.kategori', compact('kategori', 'produks'));
+}
+
+public function search(Request $request)
+{
+    // Ambil kata kunci pencarian dari input pengguna
+    $keyword = $request->input('search');
+
+    // Cari produk berdasarkan judul
+    $produks = Produk::where('judul', 'like', '%' . $keyword . '%')->get();
+    $kategori = Kategori::where('nama', 'like', '%' . $keyword . '%')->get();
+
+    // Kembalikan view dengan hasil pencarian
+    return view('user.dashboard1', compact('produks', 'kategori'));
 }
 
 
